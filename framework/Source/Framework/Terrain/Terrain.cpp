@@ -354,20 +354,20 @@ void Terrain::gen_graph()
 
                 // Wall vertices
                 Vec3 tl = terrain->get_world_position(i, j);
-                tl.x -= 1.25f;
-                tl.z += 1.25f;
+                tl.x -= 2.5f;
+                tl.z += 2.5f;
                 WallVertices.push_back(tl);
                 Vec3 tr = terrain->get_world_position(i, j);
-                tr.x += 1.25f;
-                tr.z += 1.25f;
+                tr.x += 2.5f;
+                tr.z += 2.5f;
                 WallVertices.push_back(tr);
                 Vec3 bl = terrain->get_world_position(i, j);
-                bl.x -= 1.25f;
-                bl.z -= 1.25f;
+                bl.x -= 2.5f;
+                bl.z -= 2.5f;
                 WallVertices.push_back(bl);
                 Vec3 br = terrain->get_world_position(i, j);
-                br.x += 1.25f;
-                br.z -= 1.25f;
+                br.x += 2.5f;
+                br.z -= 2.5f;
                 WallVertices.push_back(br);
 
                 // Wall edges

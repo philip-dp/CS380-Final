@@ -70,13 +70,13 @@ bool is_clear_path(Vec3 const& s1, Vec3 const& e1, Vec3 s2, Vec3 e2)
     // Add/subtract s2 and e2 with epsilon
     if (s2.x == e2.x) // Vertical wall
     {
-        s2.z -= FLT_EPSILON * 8;
-        e2.z += FLT_EPSILON * 8;
+        s2.z -= FLT_EPSILON * 64;
+        e2.z += FLT_EPSILON * 64;
     }
     else if (s2.z == e2.z)
     {
-        s2.x -= FLT_EPSILON * 8;
-        e2.x += FLT_EPSILON * 8;
+        s2.x -= FLT_EPSILON * 64;
+        e2.x += FLT_EPSILON * 64;
     }
 
     float t = ((s1.x - s2.x) * (s2.z - e2.z) - (s1.z - s2.z) * (s2.x - e2.x)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.x - e2.x));
