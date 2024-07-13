@@ -109,12 +109,14 @@ private:
     unsigned currentMap;
     std::vector<GridPos> Walls;
     std::vector<Vec3> WallVertices;
+    std::vector<std::pair<Vec3, Vec3>> WallEdges;
     struct Edge
     {
         Edge(Vec3 s, Vec3 e) : start{ s }, end{ e } {};
         Vec3 start, end;
     };
-    std::list<Edge> Edges;
+    std::vector<Edge> Edges;
+    std::vector<Edge> PathEdges;
     bool showGraph{};
     void draw_graph();
 

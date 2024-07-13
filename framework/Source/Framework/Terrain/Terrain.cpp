@@ -352,6 +352,7 @@ void Terrain::gen_graph()
                 wall.col = j;
                 Walls.push_back(wall);
 
+                // Wall vertices
                 Vec3 tl = terrain->get_world_position(i, j);
                 tl.x -= 1.25f;
                 tl.z += 1.25f;
@@ -368,31 +369,17 @@ void Terrain::gen_graph()
                 br.x += 1.25f;
                 br.z -= 1.25f;
                 WallVertices.push_back(br);
+
+                // Wall edges
+                WallEdges.push_back(std::make_pair(tl, tr));
+                WallEdges.push_back(std::make_pair(tl, bl));
+                WallEdges.push_back(std::make_pair(bl, br));
+                WallEdges.push_back(std::make_pair(tr, br));
             }
         }
     }
 
-    // Add edges between visible wall vertices
-    //for (int i{}; i < Walls.size(); ++i)
-    //{
-    //    for (int j{i}; j < Walls.size(); ++j)
-    //    {
-    //        // Check each corner of wall
-    //        // Start and end should correspond to corner of wall tile
-    //        Vec3 start = terrain->get_world_position(Walls[i].row, Walls[i].col);
-    //        Vec3 end = terrain->get_world_position(Walls[j].row, Walls[j].col);
-
-    //        
-    //        
-
-    //        /*if (is_clear_path(start, end))
-    //        {
-
-    //            add_edge(start, end);
-    //        }*/
-
-    //    }
-    //}
+    std::cout << "Wall edge count: " << WallEdges.size() << "\n";
 
     // First join all vertices to each other, even if intersecting wall
     for (int i{}, k_start{ 4 }; i < WallVertices.size(); ++i, k_start += 4)
@@ -405,9 +392,31 @@ void Terrain::gen_graph()
             }
             ++i;
         }
+        --i;
     }
 
-    std::cout << "Edge count: " << Edges.size() << "\n";
+
+    // Check if line segment intersects with wall edge, if true, remove line
+    for (int i{}; i < Edges.size(); ++i)
+    {
+        bool intersect{};
+        for (int j{}; j < WallEdges.size(); ++j)
+        {
+            if (!is_clear_path(Edges[i].start, Edges[i].end, WallEdges[j].first, WallEdges[j].second))
+            {
+                intersect = true;
+                break;
+            }
+        }
+
+        if (!intersect)
+        {
+            PathEdges.push_back(Edges[i]);
+        }
+    }
+
+    std::cout << "Path edge count: " << PathEdges.size() << "\n";
+
 }
 
 void Terrain::toggle_graph()
@@ -426,7 +435,7 @@ void Terrain::draw_graph()
     {
         auto& dr = renderer->get_debug_renderer();
 
-        for (Edge const& edge : Edges)
+        for (Edge const& edge : PathEdges)
             dr.draw_line(edge.start, edge.end, DirectX::Colors::Red);
     }
 }

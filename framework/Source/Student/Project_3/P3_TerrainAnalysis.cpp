@@ -65,45 +65,27 @@ bool is_clear_path(int row0, int col0, int row1, int col1)
     return false;
 }
 
-bool is_clear_path(Vec3 const& start, Vec3 const& end)
+bool is_clear_path(Vec3 const& s1, Vec3 const& e1, Vec3 s2, Vec3 e2)
 {
-    // Check walls only within bounding box
-    float minrow = (start.x > end.x) ? end.x : start.x;
-    float maxrow = (start.x > end.x) ? start.x : end.x;
-    float mincol = (start.z > end.z) ? end.z : start.z;
-    float maxcol = (start.z > end.z) ? start.z : end.z;
-
-    Vec2 startline = Vec2(start.x, start.z);
-    Vec2 endline = Vec2(end.x, end.z);
-
-    std::cout << "start: " << startline.x << ", " << startline.y << "\n";
-    std::cout << "end  : " << endline.x << ", " << endline.y << "\n\n";
-
-    float offset = FLT_EPSILON;
-
-    for (float i = minrow; i <= maxrow; ++i)
+    // Add/subtract s2 and e2 with epsilon
+    if (s2.x == e2.x) // Vertical wall
     {
-        for (float j = mincol; j <= maxcol; ++j)
-        {
-            if (terrain->is_wall(static_cast<int>(i), static_cast<int>(j)))
-            {
-                // Check if line intersects any of 4 edges
-                Vec2 tl = Vec2(static_cast<float>(i / 20.0f - offset), static_cast<float>(j / 20.0f - offset));
-                Vec2 tr = Vec2(static_cast<float>(i / 20.0f + offset), static_cast<float>(j / 20.0f - offset));
-                Vec2 bl = Vec2(static_cast<float>(i / 20.0f - offset), static_cast<float>(j / 20.0f + offset));
-                Vec2 br = Vec2(static_cast<float>(i / 20.0f + offset), static_cast<float>(j / 20.0f + offset));
-
-                if (line_intersect(startline, endline, tl, tr) ||
-                    line_intersect(startline, endline, tl, bl) ||
-                    line_intersect(startline, endline, bl, br) ||
-                    line_intersect(startline, endline, tr, br))
-                    return true;
-
-            }
-        }
+        s2.z -= FLT_EPSILON * 8;
+        e2.z += FLT_EPSILON * 8;
+    }
+    else if (s2.z == e2.z)
+    {
+        s2.x -= FLT_EPSILON * 8;
+        e2.x += FLT_EPSILON * 8;
     }
 
-    return false;
+    float t = ((s1.x - s2.x) * (s2.z - e2.z) - (s1.z - s2.z) * (s2.x - e2.x)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.x - e2.x));
+    float u = -(((s1.x - e1.x) * (s1.z - s2.z) - (s1.z - e1.z) * (s1.x - s2.x)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.x - e2.x)));
+
+    if (t > 0.0f && t < 1.0f && u > 0.0f && u < 1.0f)
+        return false;
+    else return true;
+    
 }
 
 void analyze_openness(MapLayer<float> &layer)
