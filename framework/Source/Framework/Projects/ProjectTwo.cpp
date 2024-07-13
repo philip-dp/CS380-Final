@@ -168,6 +168,10 @@ void ProjectTwo::build_ui()
     Callback nextMapCB = std::bind(&Terrain::goto_next_map, terrain.get());
     auto mapButton = ui->create_button(UIAnchor::TOP_RIGHT, -90, 32, nextMapCB, L"Next Map");
 
+    // toggle visibility graph
+    Callback toggleVisCB = std::bind(&Terrain::toggle_graph, terrain.get());
+    auto visButton = ui->create_button(UIAnchor::TOP_RIGHT, -90, 512, toggleVisCB, L"Visibility Graph");
+
     // just below the map button, add a button that transitions through pathfinding algorithms
     Callback methodCB = std::bind(&AStarAgent::next_method_type, agent);
     TextGetter methodText = std::bind(&AStarAgent::get_method_text, agent);

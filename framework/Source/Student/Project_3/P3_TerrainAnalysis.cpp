@@ -29,18 +29,40 @@ float distance_to_closest_wall(int row, int col)
 
 bool is_clear_path(int row0, int col0, int row1, int col1)
 {
-    /*
-        Two cells (row0, col0) and (row1, col1) are visible to each other if a line
-        between their centerpoints doesn't intersect the four boundary lines of every
-        wall cell.  You should puff out the four boundary lines by a very tiny amount
-        so that a diagonal line passing by the corner will intersect it.  Make use of the
-        line_intersect helper function for the intersection test and the is_wall member
-        function in the global terrain to determine if a cell is a wall or not.
-    */
+    // Check walls only within bounding box
+    float minrow = (row0 > row1) ? static_cast<float>(row1) : static_cast<float>(row0);
+    float maxrow = (row0 > row1) ? static_cast<float>(row0) : static_cast<float>(row1);
+    float mincol = (col0 > col1) ? static_cast<float>(col1) : static_cast<float>(col0);
+    float maxcol = (col0 > col1) ? static_cast<float>(col0) : static_cast<float>(col1);
 
-    // WRITE YOUR CODE HERE
+    Vec2 startline = Vec2(static_cast<float>(row0) / 20.0f, static_cast<float>(col0) / 20.0f);
+    Vec2 endline = Vec2(static_cast<float>(row1) / 20.0f, static_cast<float>(col1) / 20.0f);
 
-    return false; // REPLACE THIS
+    float offset = 1.0f / 40.0f + FLT_EPSILON;
+
+    for (float i = minrow; i <= maxrow; ++i)
+    {
+        for (float j = mincol; j <= maxcol; ++j)
+        {
+            if (terrain->is_wall(static_cast<int>(i), static_cast<int>(j)))
+            {
+                // Check if line intersects any of 4 edges
+                Vec2 tl = Vec2(static_cast<float>(i / 20.0f - offset), static_cast<float>(j / 20.0f - offset));
+                Vec2 tr = Vec2(static_cast<float>(i / 20.0f + offset), static_cast<float>(j / 20.0f - offset));
+                Vec2 bl = Vec2(static_cast<float>(i / 20.0f - offset), static_cast<float>(j / 20.0f + offset));
+                Vec2 br = Vec2(static_cast<float>(i / 20.0f + offset), static_cast<float>(j / 20.0f + offset));
+
+                if (line_intersect(startline, endline, tl, tr) ||
+                    line_intersect(startline, endline, tl, bl) ||
+                    line_intersect(startline, endline, bl, br) ||
+                    line_intersect(startline, endline, tr, br))
+                        return true;
+                
+            }
+        }
+    }
+
+    return false;
 }
 
 void analyze_openness(MapLayer<float> &layer)

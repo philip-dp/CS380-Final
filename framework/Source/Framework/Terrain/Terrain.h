@@ -79,6 +79,11 @@ public:
     bool goto_map(unsigned mapNum);
     size_t num_maps() const;
 
+    void gen_graph();
+    void toggle_graph();
+    void add_edge(Vec3 start, Vec3 end);
+
+
     struct MapData
     {
         MapData() = default;
@@ -102,6 +107,15 @@ private:
     std::vector<std::vector<Vec3>> positions;
 
     unsigned currentMap;
+    std::vector<GridPos> Walls;
+    struct Edge
+    {
+        Edge(Vec3 s, Vec3 e) : start{ s }, end{ e } {};
+        Vec3 start, end;
+    };
+    std::list<Edge> Edges;
+    bool showGraph{};
+    void draw_graph();
 
     bool initialize();
     void shutdown();

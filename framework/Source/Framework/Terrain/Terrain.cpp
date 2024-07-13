@@ -172,6 +172,8 @@ void Terrain::load_map(unsigned mapIndex)
     generate_positions();
 
     refresh_static_analysis_layers();
+
+    gen_graph();
     
     Messenger::send_message(Messages::MAP_CHANGE);
 }
@@ -320,6 +322,7 @@ void Terrain::draw()
     agentVisionLayer.draw(instancer, positions);
     seekLayer.draw(instancer, positions);
     fogLayer.draw(instancer, positions);
+    draw_graph();
 }
 
 void Terrain::draw_debug()
@@ -332,5 +335,61 @@ Terrain::MapData::MapData(int height, int width) : height(height), width(width)
     for (auto && row : data)
     {
         row.resize(width, false);
+    }
+}
+
+void Terrain::gen_graph()
+{
+    // Get walls in map
+    for (int i{}; i < terrain->get_map_width(); ++i)
+    {
+        for (int j{}; j < terrain->get_map_height(); ++j)
+        {
+            if (terrain->is_wall(i, j))
+            {
+                GridPos wall;
+                wall.row = i;
+                wall.col = j;
+                Walls.push_back(wall);
+            }
+        }
+    }
+
+    // Add edges between visible wall vertices
+    for (int i{}; i < Walls.size(); ++i)
+    {
+        for (int j{i}; j < Walls.size(); ++j)
+        {
+            if (is_clear_path(Walls[i].row, Walls[i].col, Walls[j].row, Walls[j].col))
+            {
+                Vec3 const& start = terrain->get_world_position(Walls[i].row, Walls[i].col);
+                Vec3 const& end = terrain->get_world_position(Walls[j].row, Walls[j].col);
+
+                add_edge(start, end);
+            }
+        }
+    }
+
+    std::cout << "Edge count: " << Edges.size() << "\n";
+}
+
+void Terrain::toggle_graph()
+{
+    showGraph = !showGraph;
+}
+
+void Terrain::add_edge(Vec3 start, Vec3 end)
+{
+    Edges.push_back(Edge(start, end));
+}
+
+void Terrain::draw_graph()
+{
+    if (showGraph)
+    {
+        auto& dr = renderer->get_debug_renderer();
+
+        for (Edge const& edge : Edges)
+            dr.draw_line(edge.start, edge.end, DirectX::Colors::Red);
     }
 }
