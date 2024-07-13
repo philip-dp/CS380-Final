@@ -108,6 +108,7 @@ private:
 
     unsigned currentMap;
     std::vector<GridPos> Walls;
+    std::vector<Vec3> WallVertices;
     struct Edge
     {
         Edge(Vec3 s, Vec3 e) : start{ s }, end{ e } {};

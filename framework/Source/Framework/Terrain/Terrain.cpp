@@ -351,22 +351,59 @@ void Terrain::gen_graph()
                 wall.row = i;
                 wall.col = j;
                 Walls.push_back(wall);
+
+                Vec3 tl = terrain->get_world_position(i, j);
+                tl.x -= 1.25f;
+                tl.z += 1.25f;
+                WallVertices.push_back(tl);
+                Vec3 tr = terrain->get_world_position(i, j);
+                tr.x += 1.25f;
+                tr.z += 1.25f;
+                WallVertices.push_back(tr);
+                Vec3 bl = terrain->get_world_position(i, j);
+                bl.x -= 1.25f;
+                bl.z -= 1.25f;
+                WallVertices.push_back(bl);
+                Vec3 br = terrain->get_world_position(i, j);
+                br.x += 1.25f;
+                br.z -= 1.25f;
+                WallVertices.push_back(br);
             }
         }
     }
 
     // Add edges between visible wall vertices
-    for (int i{}; i < Walls.size(); ++i)
-    {
-        for (int j{i}; j < Walls.size(); ++j)
-        {
-            if (is_clear_path(Walls[i].row, Walls[i].col, Walls[j].row, Walls[j].col))
-            {
-                Vec3 const& start = terrain->get_world_position(Walls[i].row, Walls[i].col);
-                Vec3 const& end = terrain->get_world_position(Walls[j].row, Walls[j].col);
+    //for (int i{}; i < Walls.size(); ++i)
+    //{
+    //    for (int j{i}; j < Walls.size(); ++j)
+    //    {
+    //        // Check each corner of wall
+    //        // Start and end should correspond to corner of wall tile
+    //        Vec3 start = terrain->get_world_position(Walls[i].row, Walls[i].col);
+    //        Vec3 end = terrain->get_world_position(Walls[j].row, Walls[j].col);
 
-                add_edge(start, end);
+    //        
+    //        
+
+    //        /*if (is_clear_path(start, end))
+    //        {
+
+    //            add_edge(start, end);
+    //        }*/
+
+    //    }
+    //}
+
+    // First join all vertices to each other, even if intersecting wall
+    for (int i{}, k_start{ 4 }; i < WallVertices.size(); ++i, k_start += 4)
+    {
+        for (int j{}; j < 4; ++j)
+        {
+            for (int k{ k_start }; k < WallVertices.size(); ++k)
+            {
+                add_edge(WallVertices[i], WallVertices[k]);
             }
+            ++i;
         }
     }
 

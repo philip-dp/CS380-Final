@@ -20,6 +20,7 @@ class MapLayer;
 
 float distance_to_closest_wall(int row, int col);
 bool is_clear_path(int row0, int col0, int row1, int col1);
+bool is_clear_path(Vec3 const& start, Vec3 const& end);
 void analyze_openness(MapLayer<float> &layer);
 void analyze_visibility(MapLayer<float> &layer);
 void analyze_visible_to_cell(MapLayer<float> &layer, int row, int col);
