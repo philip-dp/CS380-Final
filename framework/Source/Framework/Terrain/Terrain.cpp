@@ -149,6 +149,7 @@ void Terrain::load_map_data(const fs::path &file)
 
 void Terrain::load_map(unsigned mapIndex)
 {
+    clear_graph();
     const auto &map = mapData[mapIndex];
 
     // inject the map data into the wall layer
@@ -278,6 +279,7 @@ void Terrain::goto_next_map()
     // move to the next map
     currentMap = (currentMap + 1) % mapData.size();
 
+
     load_map(currentMap);
 }
 
@@ -340,6 +342,9 @@ Terrain::MapData::MapData(int height, int width) : height(height), width(width)
 
 void Terrain::gen_graph()
 {
+    // Time
+    auto start = std::chrono::high_resolution_clock::now();
+
     // Get walls in map
     for (int i{}; i < terrain->get_map_width(); ++i)
     {
@@ -379,7 +384,7 @@ void Terrain::gen_graph()
         }
     }
 
-    std::cout << "Wall edge count: " << WallEdges.size() << "\n";
+    
 
     // First join all vertices to each other, even if intersecting wall
     for (int i{}, k_start{ 4 }; i < WallVertices.size(); ++i, k_start += 4)
@@ -415,7 +420,11 @@ void Terrain::gen_graph()
         }
     }
 
-    std::cout << "Path edge count: " << PathEdges.size() << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout << "Duration: " << duration.count() << " seconds" << "\n";
+    std::cout << "Wall edge count: " << WallEdges.size() << "\n";
+    std::cout << "Path edge count: " << PathEdges.size() << "\n\n";
 
 }
 
@@ -427,6 +436,16 @@ void Terrain::toggle_graph()
 void Terrain::add_edge(Vec3 start, Vec3 end)
 {
     Edges.push_back(Edge(start, end));
+}
+
+void Terrain::clear_graph()
+{
+    Walls.clear();
+    WallVertices.clear();
+    WallEdges.clear();
+    Edges.clear();
+    PathEdges.clear();
+    showGraph = false;
 }
 
 void Terrain::draw_graph()

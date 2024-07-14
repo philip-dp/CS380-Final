@@ -31,7 +31,7 @@ class Terrain
     friend class ProjectThree;
     friend class EnemyAgent;
 public:
-    static const size_t numLayers = 8;
+    static const size_t numLayers = 3;
 
     Terrain();
 
@@ -82,6 +82,7 @@ public:
     void gen_graph();
     void toggle_graph();
     void add_edge(Vec3 start, Vec3 end);
+    void clear_graph();
 
 
     struct MapData
