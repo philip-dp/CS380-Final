@@ -16,6 +16,7 @@ goto case_%vs_version%
   "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv" CS380.sln /build Release
   goto end_case
 :case_2022
+  call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
   msbuild CS380.sln -verbosity:quiet -t:build /p:Configuration=Release /p:PlatformTarget=x86
   goto end_case
 :end_case
