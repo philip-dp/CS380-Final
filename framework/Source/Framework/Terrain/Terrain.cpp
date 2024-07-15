@@ -50,7 +50,7 @@ Terrain::Terrain() :
     agentVisionLayer("Agent Vision", layerHeightStep * 3.0f),
     fogLayer("Fog of War", layerHeightStep * 1.0f),
     seekLayer("Seek", layerHeightStep * 2.0f),
-    currentMap(-1)  
+    currentMap(-1)
 {}
 
 bool Terrain::initialize()
@@ -421,10 +421,23 @@ void Terrain::gen_graph()
     }
 
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-    std::cout << "Duration: " << duration.count() << " seconds" << "\n";
-    std::cout << "Wall edge count: " << WallEdges.size() << "\n";
-    std::cout << "Path edge count: " << PathEdges.size() << "\n\n";
+    std::chrono::duration<double> duration_ = end - start;
+    //std::cout << "Duration: " << duration_.count() << " seconds" << "\n";
+    //std::cout << "Wall edge count: " << WallEdges.size() << "\n";
+    //std::cout << "Path edge count: " << PathEdges.size() << "\n\n";
+
+    duration = std::to_wstring(duration_.count());
+    walledges_size = std::to_wstring(WallEdges.size());
+    pathedges_size = std::to_wstring(PathEdges.size());
+
+    TextGetter durGetter = std::bind(&Terrain::get_time, terrain.get());
+    auto durText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 350, L"Time:", durGetter);
+
+    TextGetter walledgeGetter = std::bind(&Terrain::get_walledges_size, terrain.get());
+    auto walledgeText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 375, L"Wall Edges:", walledgeGetter);
+
+    TextGetter pathedgeGetter = std::bind(&Terrain::get_pathedges_size, terrain.get());
+    auto pathedgeText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 400, L"Vis Edges:", pathedgeGetter);
 
 }
 

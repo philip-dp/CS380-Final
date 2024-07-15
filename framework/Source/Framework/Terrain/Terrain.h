@@ -83,6 +83,9 @@ public:
     void toggle_graph();
     void add_edge(Vec3 start, Vec3 end);
     void clear_graph();
+    std::wstring const& get_time() { return duration; }
+    std::wstring const& get_walledges_size() { return walledges_size; }
+    std::wstring const& get_pathedges_size() { return pathedges_size; }
 
 
     struct MapData
@@ -120,6 +123,10 @@ private:
     std::vector<Edge> PathEdges;
     bool showGraph{};
     void draw_graph();
+
+    std::wstring duration;
+    std::wstring pathedges_size;
+    std::wstring walledges_size;
 
     bool initialize();
     void shutdown();
