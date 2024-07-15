@@ -45,7 +45,7 @@ void ProjectOne::setup()
     // Camera position can be modified from this default
     auto camera = agents->get_camera_agent();
     camera->set_position(Vec3(-62.0f, 70.0f, terrain->mapSizeInWorld * 0.5f));
-    camera->set_pitch(0.610865); // 35 degrees
+    camera->set_pitch(0.610865f); // 35 degrees
 
     // Sound control (these sound functions can be kicked off in a behavior tree node - see the example in L_PlaySound.cpp)
     audioManager->SetVolume(0.5f);

@@ -68,19 +68,30 @@ bool is_clear_path(int row0, int col0, int row1, int col1)
 bool is_clear_path(Vec3 const& s1, Vec3 const& e1, Vec3 s2, Vec3 e2)
 {
     // Add/subtract s2 and e2 with epsilon
-    if (s2.x == e2.x) // Vertical wall
+    float min{}, max{};
+    float t{}, u{};
+    if (std::abs(s2.x - e2.x) <= FLT_EPSILON) // Vertical wall
     {
-        s2.z -= FLT_EPSILON * 34;
-        e2.z += FLT_EPSILON * 34;
+        min = (s2.z > e2.z) ? e2.z : s2.z;
+        max = (s2.z < e2.z) ? e2.z : s2.z;
+        min -= FLT_EPSILON * 32.5f;
+        max += FLT_EPSILON * 32.5f;
+
+        t = ((s1.x - s2.x) * (max - min) - (s1.z - max) * (s2.x - e2.x)) / ((s1.x - e1.x) * (max - min) - (s1.z - e1.z) * (s2.x - e2.x));
+        u = -(((s1.x - e1.x) * (s1.z - max) - (s1.z - e1.z) * (s1.x - s2.x)) / ((s1.x - e1.x) * (max - min) - (s1.z - e1.z) * (s2.x - e2.x)));
+
     }
-    else if (s2.z == e2.z)
+    else if (std::abs(s2.z - e2.z) <= FLT_EPSILON) // Horizontal wall
     {
-        s2.x -= FLT_EPSILON * 34;
-        e2.x += FLT_EPSILON * 34;
+        min = (s2.x > e2.x) ? e2.x : s2.x;
+        max = (s2.x < e2.x) ? e2.x : s2.x;
+        min -= FLT_EPSILON * 32.5f;
+        max += FLT_EPSILON * 32.5f;
+
+        t = ((s1.x - max) * (s2.z - e2.z) - (s1.z - s2.z) * (max - min)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (max - min));
+        u = -(((s1.x - e1.x) * (s1.z - s2.z) - (s1.z - e1.z) * (s1.x - max)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (max - min)));
     }
 
-    float t = ((s1.x - s2.x) * (s2.z - e2.z) - (s1.z - s2.z) * (s2.x - e2.x)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.x - e2.x));
-    float u = -(((s1.x - e1.x) * (s1.z - s2.z) - (s1.z - e1.z) * (s1.x - s2.x)) / ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.x - e2.x)));
 
     if (t > 0.0f && t < 1.0f && u > 0.0f && u < 1.0f)
         return false;
