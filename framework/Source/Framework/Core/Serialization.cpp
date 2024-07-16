@@ -60,22 +60,15 @@ bool Serialization::initialize()
     while (basePath != rootPath)
     {
         mapsPath = basePath / "Maps";
-        testsPath = basePath / "Tests";
+        //testsPath = basePath / "Tests";
         assetsPath = basePath / "Assets";
-        outputPath = basePath / "Output";
+        //outputPath = basePath / "Output";
         behaviorTreePath = basePath / "Source" / "Student" / "Project_1" / "Trees";
 
-        if (fs::exists(mapsPath) && fs::exists(testsPath) &&
+        if (fs::exists(mapsPath) &&
             fs::exists(assetsPath) && 
             fs::exists(behaviorTreePath))
         {
-            if (fs::exists(outputPath) == false)
-            {
-                if (fs::create_directory(outputPath) == false)
-                {
-                    return false;
-                }
-            }
 
             return true;
         }

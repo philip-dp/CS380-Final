@@ -61,14 +61,14 @@ bool ProjectTwo::initialize()
     return terrain->initialize() &&
         agents->initialize() &&
         ui->initialize() &&
-        pather->initialize() &&
-        tester.initialize();
+        pather->initialize();
+        //tester.initialize();
 }
 
 bool ProjectTwo::finalize()
 {
     agent = agents->create_pathing_agent();
-    tester.set_agent(agent);    
+    //tester.set_agent(agent);    
 
     // initialize the position text
     grid_pos_to_text(GridPos { -1, -1 }, startPosText);
@@ -156,7 +156,7 @@ void ProjectTwo::update()
     }
     else
     {
-        tester.tick();
+        //tester.tick();
     }
 }
 
