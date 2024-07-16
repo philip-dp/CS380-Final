@@ -170,114 +170,16 @@ void ProjectTwo::build_ui()
 
     // toggle visibility graph
     Callback toggleVisCB = std::bind(&Terrain::toggle_graph, terrain.get());
-    auto visButton = ui->create_button(UIAnchor::TOP_RIGHT, -90, 512, toggleVisCB, L"Visibility Graph");
-
-    // just below the map button, add a button that transitions through pathfinding algorithms
-    Callback methodCB = std::bind(&AStarAgent::next_method_type, agent);
-    TextGetter methodText = std::bind(&AStarAgent::get_method_text, agent);
-    auto methodButton = ui->create_dynamic_button(UIAnchor::BOTTOM, mapButton,
-        10, methodCB, methodText);
-
-    // then a button for the heuristic to use
-    Callback heuristicCB = std::bind(&AStarAgent::next_heuristic_type, agent);
-    TextGetter heuristicText = std::bind(&AStarAgent::get_heuristic_type_text, agent);
-    auto heuristicButton = ui->create_dynamic_button(UIAnchor::BOTTOM, methodButton,
-        10, heuristicCB, heuristicText);
-
-    // then a slider to control the weight
-    Getter<float> weightGet = std::bind(&AStarAgent::get_heuristic_weight, agent);
-    Setter<float> weightSet = std::bind(&AStarAgent::set_heuristic_weight, agent, std::placeholders::_1);
-    TextGetter weightText = std::bind(&AStarAgent::get_heuristic_weight_text, agent);
-    auto weightSlider = ui->create_slider<float>(UIAnchor::BOTTOM, heuristicButton,
-        10, 0.0f, 2.0f, weightGet, weightSet, weightText, L"Weight:");
-
-    // then a button for smoothing
-    Callback smoothingCB = std::bind(&AStarAgent::toggle_smoothing, agent);
-    Getter<bool> smoothingGet = std::bind(&AStarAgent::get_smoothing, agent);
-    auto smoothingButton = ui->create_toggle_button(UIAnchor::BOTTOM, weightSlider,
-        10, smoothingCB, L"Smoothing", smoothingGet);
-
-    // then a button for rubberbanding
-    Callback rubberCB = std::bind(&AStarAgent::toggle_rubberbanding, agent);
-    Getter<bool> rubberGet = std::bind(&AStarAgent::get_rubberbanding, agent);
-    auto rubberButton = ui->create_toggle_button(UIAnchor::BOTTOM, smoothingButton,
-        10, rubberCB, L"Rubberbanding", rubberGet);
-
-    // then a button for single step
-    Callback singleCB = std::bind(&AStarAgent::toggle_single_step, agent);
-    Getter<bool> singleGet = std::bind(&AStarAgent::get_single_step, agent);
-    auto singleButton = ui->create_toggle_button(UIAnchor::BOTTOM, rubberButton,
-        10, singleCB, L"Single Step", singleGet);
-
-    // then a button for debug coloring
-    Callback debugCB = std::bind(&AStarAgent::toggle_debug_coloring, agent);
-    Getter<bool> debugGet = std::bind(&AStarAgent::get_debug_coloring, agent);
-    auto debugButton = ui->create_toggle_button(UIAnchor::BOTTOM, singleButton,
-        10, debugCB, L"Debug Coloring", debugGet);
-
-    // then a button for movement
-    Callback movementCB = std::bind(&AStarAgent::next_movement_type, agent);
-    TextGetter movementGet = std::bind(&AStarAgent::get_movement_type_text, agent);
-    auto movementButton = ui->create_dynamic_button(UIAnchor::BOTTOM, debugButton,
-        10, movementCB, movementGet);
-
+    auto visButton = ui->create_button(UIAnchor::TOP_RIGHT, -90, 64, toggleVisCB, L"Visibility Graph");
 
     // add some text on the left side for displaying fps
     TextGetter fpsGetter = std::bind(&Engine::get_fps_text, engine.get());
     auto fpsText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 32, L"FPS:", fpsGetter);
 
-    // and the pathing time
-    TextGetter timeGetter = std::bind(&decltype(pathingTimer)::get_text, &pathingTimer);
-    auto pathingTimeText = ui->create_value_text_field(UIAnchor::BOTTOM, fpsText,
-        10, L"Time:", timeGetter);
-
-    // and the current path start position
-    TextGetter startGetter = start_pos_text_getter;
-    auto startText = ui->create_value_text_field(UIAnchor::BOTTOM, pathingTimeText,
-        10, L"Start:", startGetter);
-
-    // and the current path goal position
-    TextGetter goalGetter = goal_pos_text_getter;
-    auto goalText = ui->create_value_text_field(UIAnchor::BOTTOM, startText,
-        10, L"Goal:", goalGetter);
-
-    Callback testCB = std::bind(&PathTester::execute_current_test, &tester);
-    TextGetter testText = std::bind(&PathTester::get_button_text, &tester);
-    auto testButton = ui->create_dynamic_button(UIAnchor::BOTTOM, goalText, 10,
-        testCB, testText);
-
-    Callback nextTestCB = std::bind(&PathTester::goto_next_test, &tester);
-    auto nextTestButton = ui->create_button(UIAnchor::BOTTOM, testButton, 10,
-        nextTestCB, L"Next Test");
-
-    Callback allTestsCB = std::bind(&PathTester::execute_all_tests, &tester);
-    auto allTestsButton = ui->create_button(UIAnchor::BOTTOM, nextTestButton, 10,
-        allTestsCB, L"Run All Tests");
-
-    Callback failureCB = std::bind(&PathTester::goto_next_failed, &tester);
-    Getter<bool> failureCond = std::bind(&PathTester::has_multiple_failed_tests, &tester);
-    auto failureButton = ui->create_conditional_button(UIAnchor::BOTTOM, allTestsButton,
-        10, failureCB, L"Next Failed Test", failureCond);
-
-    Callback speedCB = std::bind(&PathTester::execute_speed_test, &tester);
-    auto speedTestButton = ui->create_button(UIAnchor::BOTTOM, failureButton, 10,
-        speedCB, L"Run Speed Test");
-
-
-
     // add a text field at the top for the project
     auto projectBanner = ui->create_banner_text_field(UIAnchor::TOP, 0, 32,
-        UIAnchor::CENTER, L"Project Two");
+        UIAnchor::CENTER, L"Final Project");
 
-    // add a banner to display overall testing results
-    TextGetter testingText = std::bind(&PathTester::get_status_text, &tester);
-    auto testingBanner = ui->create_dynamic_banner_text_field(UIAnchor::BOTTOM,
-        0, -16, UIAnchor::CENTER, testingText);
-
-    // and a banner above that to display test specific failure messages
-    TextGetter failMSGText = std::bind(&PathTester::get_failed_text, &tester);
-    auto failedBanner = ui->create_dynamic_banner_text_field(UIAnchor::TOP,
-        testingBanner, 10, UIAnchor::CENTER, failMSGText);
 }
 
 

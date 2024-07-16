@@ -431,13 +431,13 @@ void Terrain::gen_graph()
     pathedges_size = std::to_wstring(PathEdges.size());
 
     TextGetter durGetter = std::bind(&Terrain::get_time, terrain.get());
-    auto durText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 350, L"Time:", durGetter);
+    auto durText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 64, L"Time:", durGetter);
 
     TextGetter walledgeGetter = std::bind(&Terrain::get_walledges_size, terrain.get());
-    auto walledgeText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 375, L"Wall Edges:", walledgeGetter);
+    auto walledgeText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 96, L"Wall Edges:", walledgeGetter);
 
     TextGetter pathedgeGetter = std::bind(&Terrain::get_pathedges_size, terrain.get());
-    auto pathedgeText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 400, L"Vis Edges:", pathedgeGetter);
+    auto pathedgeText = ui->create_value_text_field(UIAnchor::TOP_LEFT, 90, 128, L"Vis Edges:", pathedgeGetter);
 
 }
 
